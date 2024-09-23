@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aircraft Stand Assignment</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to a CSS file for styles -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2em;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0 20px 0;
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #007bff;
+            color: white;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #standResult {
+            font-size: 1.2em;
+            margin-top: 20px;
+            text-align: center;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Aircraft Stand Assignment</h1>
+        <form id="assignmentForm">
+            <label for="icaoCode">Select Airport (ICAO Code):</label>
+            <select id="icaoCode" name="icaoCode" required>
+                <option value="" disabled selected>Select an airport</option>
+                <option value="FACT">Cape Town International (FACT)</option>
+                <option value="FAOR">OR Tambo International (FAOR)</option>
+                <option value="FALE">King Shaka International (FALE)</option>
+                <option value="FAPE">Port Elizabeth International (FAPE)</option>
+                <option value="FAGG">George International (FAGG)</option>
+                <option value="FAEL">East London International (FAEL)</option>
+                <option value="FAUP">Upington International (FAUP)</option>
+                <option value="FALA">Lanseria International (FALA)</option>
+                <option value="FAKN">Kruger National International (FAKN)</option>
+                <option value="FAGM">Rand Airport (FAGM)</option>
+                <!-- Add more airports if needed -->
+            </select>
+            
+            <label for="aircraftType">Aircraft Type:</label>
+            <select id="aircraftType" name="aircraftType" required>
+                <option value="" disabled selected>Select an aircraft type</option>
+                <option value="Light">Light</option>
+                <option value="Medium">Medium</option>
+                <option value="Heavy">Heavy</option>
+                <option value="Cargo">Cargo</option>
+            </select>
+
+            <button type="button" id="assignStandBtn">Assign Stand</button>
+        </form>
+
+        <p id="standResult"></p>
+    </div>
+
+    <script src="assign_stands.js"></script> <!-- Link to the external JS file -->
+</body>
+</html>
