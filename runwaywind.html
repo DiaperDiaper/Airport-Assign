@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Runway Wind Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .wind-calculator {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        .wind-calculator h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .wind-calculator form {
+            display: flex;
+            flex-direction: column;
+        }
+        .wind-calculator label {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .wind-calculator input {
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .wind-calculator button {
+            margin-top: 20px;
+            padding: 12px;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .wind-calculator button:hover {
+            background-color: darkred;
+        }
+        #results {
+            margin-top: 20px;
+            text-align: center;
+        }
+        #results p {
+            font-size: 18px;
+            margin: 5px 0;
+        }
+
+        .home-button {
+            background-color: red; /* Green background */
+            border: none; /* Remove borders */
+            color: white; /* White text */
+            padding: 15px 32px; /* Padding */
+            text-align: center; /* Center the text */
+            text-decoration: none; /* Remove underline */
+            display: inline-block; /* Make it inline */
+            font-size: 16px; /* Increase font size */
+            margin: 10px 2px;
+            cursor: pointer; /* Pointer/hand icon */
+            border-radius: 12px; /* Rounded corners */
+        }
+
+        .home-button:hover {
+            background-color: darkred; /* Darker green on hover */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wind-calculator">
+        <a href="Main.html" class="home-button">Go to Home</a>
+        <h2>Runway Wind Calculator</h2>
+        <form id="windForm">
+            <label for="runwayHeading">Runway Heading (degrees):</label>
+            <input type="number" id="runwayHeading" min="0" max="360" required>
+
+            <label for="windDirection">Wind Direction (degrees):</label>
+            <input type="number" id="windDirection" min="0" max="360" required>
+
+            <label for="windSpeed">Wind Speed (knots):</label>
+            <input type="number" id="windSpeed" min="0" required>
+
+            <button type="button" onclick="calculateWind()">Calculate Wind Components</button>
+        </form>
+
+        <div id="results">
+            <h3>Results:</h3>
+            <p id="headwind">↓ Headwind: N/A</p>
+            <p id="crosswind">→ Crosswind: N/A</p>
+            <p id="tailwind">↑ Tailwind: N/A</p>
+        </div>
+        
+    </div>
+
+    <script>
+        function calculateWind() {
+            const runwayHeading = parseFloat(document.getElementById('runwayHeading').value);
+            const windDirection = parseFloat(document.getElementById('windDirection').value);
+            const windSpeed = parseFloat(document.getElementById('windSpeed').value);
+
+            // Calculate wind angle relative to the runway
+            const windAngle = (windDirection - runwayHeading) * Math.PI / 180;
+
+            // Calculate headwind, tailwind, and crosswind components
+            const headwind = Math.round(windSpeed * Math.cos(windAngle));
+            const crosswind = Math.round(windSpeed * Math.sin(windAngle));
+
+            // If the headwind component is negative, it's a tailwind
+            const tailwind = Math.abs(headwind < 0 ? headwind : 0);
+
+            // Update the results in the HTML
+            document.getElementById('headwind').innerText = `Headwind: ${headwind > 0 ? headwind : 0} knots`;
+            document.getElementById('crosswind').innerText = `Crosswind: ${Math.abs(crosswind)} knots`;
+            document.getElementById('tailwind').innerText = `Tailwind: ${tailwind} knots`;
+        }
+    </script>
+
+</body>
+</html>

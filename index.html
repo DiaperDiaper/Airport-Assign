@@ -46,7 +46,7 @@
         button {
             width: 100%;
             padding: 15px;
-            background-color: #007bff;
+            background-color: red;
             color: white;
             font-size: 1.2em;
             border: none;
@@ -56,7 +56,7 @@
         }
 
         button:hover {
-            background-color: #0056b3;
+            background-color: darkred;
         }
 
         #standResult {
@@ -66,23 +66,31 @@
             color: #007bff;
         }
 
-        #metar {
-            font-size: 18px;
-            padding: 10px;
-            background-color: white;
-            border: 1px solid #ccc;
-            margin-top: 10px;
-        }
-        .metar-section {
-            margin-bottom: 10px;
-        }
         input {
             text-transform: uppercase;
+        }
+        .home-button {
+            background-color: red; /* Green background */
+            border: none; /* Remove borders */
+            color: white; /* White text */
+            padding: 15px 32px; /* Padding */
+            text-align: center; /* Center the text */
+            text-decoration: none; /* Remove underline */
+            display: inline-block; /* Make it inline */
+            font-size: 16px; /* Increase font size */
+            margin: 10px 2px;
+            cursor: pointer; /* Pointer/hand icon */
+            border-radius: 12px; /* Rounded corners */
+        }
+
+        .home-button:hover {
+            background-color: darkred; /* Darker green on hover */
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <a href="Main.html" class="home-button">Go to Home</a>
         <h1>Aircraft Stand Assignment</h1>
         <form id="assignmentForm">
             <label for="icaoCode">Select Airport (ICAO Code):</label>
@@ -117,69 +125,5 @@
     </div>
 
     <script src="assign_stands.js"></script> <!-- Link to the external JS file -->
-    <h1>Latest METAR Data</h1>
-    <div>
-        <label for="icao">Enter ICAO Code: </label>
-        <input type="text" id="icao" placeholder="e.g., FACT" oninput="this.value = this.value.toUpperCase();" />
-        <button onclick="getMetar()">Get METAR</button>
-    </div>
-    <div id="metar"></div>
-
-    <script>
-        async function getMetar() {
-            const icao = document.getElementById('icao').value.toUpperCase();
-            const apiKey = '42d35a602f8746f0b4c3d049c3'; // Replace with your CheckWX API key
-            const url = `https://api.checkwx.com/metar/${icao}/decoded`;
-
-            try {
-                const response = await fetch(url, {
-                    headers: {
-                        'X-API-Key': apiKey
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Error fetching METAR for ${icao}`);
-                }
-
-                const data = await response.json();
-
-                if (data && data.data && data.data.length > 0) {
-                    const metarData = data.data[0];
-                    displayMetar(metarData);
-                } else {
-                    document.getElementById('metar').innerText = `No METAR data found for ${icao}`;
-                }
-            } catch (error) {
-                document.getElementById('metar').innerText = `Error: ${error.message}`;
-            }
-        }
-
-        function displayMetar(metarData) {
-            const metarDiv = document.getElementById('metar');
-            metarDiv.innerHTML = `
-                <div class="metar-section"><strong>Raw METAR:</strong> ${metarData.raw_text}</div>
-                <div class="metar-section"><strong>Airport:</strong> ${metarData.station.name} (${metarData.icao})</div>
-                <div class="metar-section"><strong>Time:</strong> ${metarData.observed}</div>
-                <div class="metar-section"><strong>Wind:</strong> ${formatWind(metarData.wind)}</div>
-                <div class="metar-section"><strong>Visibility:</strong> ${metarData.visibility.meters} meters</div>
-                <div class="metar-section"><strong>Temperature:</strong> ${metarData.temperature.celsius} °C</div>
-                <div class="metar-section"><strong>Dew Point:</strong> ${metarData.dewpoint.celsius} °C</div>
-                <div class="metar-section"><strong>QNH (Pressure):</strong> ${metarData.barometer.hpa} hPa</div>
-                <div class="metar-section"><strong>Clouds:</strong> ${formatClouds(metarData.clouds)}</div>
-                <div class="metar-section"><strong>Weather:</strong> ${metarData.weather ? metarData.weather.map(w => w.description).join(', ') : 'None'}</div>
-            `;
-        }
-
-        function formatWind(wind) {
-            if (!wind) return 'No data';
-            return `${wind.degrees}° at ${wind.speed_kts} knots` + (wind.gust_kts ? `, gusting to ${wind.gust_kts} knots` : '');
-        }
-
-        function formatClouds(clouds) {
-            if (!clouds || clouds.length === 0) return 'Clear sky';
-            return clouds.map(cloud => `${cloud.text} at ${cloud.base_feet_agl} ft`).join(', ');
-        }
-    </script>
 </body>
 </html>

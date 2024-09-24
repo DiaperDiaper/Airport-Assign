@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>METAR Fetch</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        #icao {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-transform: uppercase;
+        }
+        button {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 100%;
+        }
+        button:hover {
+            background-color: darkred;
+        }
+        #metar {
+            font-size: 18px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        .metar-section {
+            margin-bottom: 10px;
+        }
+        .home-button {
+            background-color: red; /* Green background */
+            border: none; /* Remove borders */
+            color: white; /* White text */
+            padding: 15px 32px; /* Padding */
+            text-align: center; /* Center the text */
+            text-decoration: none; /* Remove underline */
+            display: inline-block; /* Make it inline */
+            font-size: 16px; /* Increase font size */
+            margin: 10px 2px;
+            cursor: pointer; /* Pointer/hand icon */
+            border-radius: 12px; /* Rounded corners */
+        }
+
+        .home-button:hover {
+            background-color: darkred; /* Darker green on hover */
+        }
+    </style>
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="Main.html" class="home-button">Go to Home</a>
+        <h1>Latest METAR Data</h1>
+        <input type="text" id="icao" placeholder="Enter ICAO Code" oninput="this.value = this.value.toUpperCase();" />
+        <button onclick="getMetar()">Get METAR</button>
+        <div id="metar"></div>
+    </div>
+
+    <script>
+        async function getMetar() {
+            const icao = document.getElementById('icao').value.toUpperCase();
+            const apiKey = '42d35a602f8746f0b4c3d049c3'; // Replace with your CheckWX API key
+            const url = `https://api.checkwx.com/metar/${icao}/decoded`;
+
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'X-API-Key': apiKey
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error fetching METAR for ${icao}`);
+                }
+
+                const data = await response.json();
+
+                if (data && data.data && data.data.length > 0) {
+                    const metarData = data.data[0];
+                    displayMetar(metarData);
+                } else {
+                    document.getElementById('metar').innerText = `No METAR data found for ${icao}`;
+                }
+            } catch (error) {
+                document.getElementById('metar').innerText = `Error: ${error.message}`;
+            }
+        }
+
+        function displayMetar(metarData) {
+            const metarDiv = document.getElementById('metar');
+            metarDiv.innerHTML = `
+                <div class="metar-section"><strong>Raw METAR:</strong> ${metarData.raw_text}</div>
+                <div class="metar-section"><strong>Airport:</strong> ${metarData.station.name} (${metarData.icao})</div>
+                <div class="metar-section"><strong>Time:</strong> ${metarData.observed}</div>
+                <div class="metar-section"><strong>Wind:</strong> ${formatWind(metarData.wind)}</div>
+                <div class="metar-section"><strong>Visibility:</strong> ${metarData.visibility.meters} meters</div>
+                <div class="metar-section"><strong>Temperature:</strong> ${metarData.temperature.celsius} °C</div>
+                <div class="metar-section"><strong>Dew Point:</strong> ${metarData.dewpoint.celsius} °C</div>
+                <div class="metar-section"><strong>QNH (Pressure):</strong> ${metarData.barometer.hpa} hPa</div>
+                <div class="metar-section"><strong>Clouds:</strong> ${formatClouds(metarData.clouds)}</div>
+                
+            `;
+        }
+
+        function formatWind(wind) {
+            if (!wind) return 'No data';
+            return `${wind.degrees}° at ${wind.speed_kts} knots` + (wind.gust_kts ? `, gusting to ${wind.gust_kts} knots` : '');
+        }
+
+        function formatClouds(clouds) {
+            if (!clouds || clouds.length === 0) return 'Clear sky';
+            return clouds.map(cloud => `${cloud.text} at ${cloud.base_feet_agl} ft`).join(', ');
+        }
+    </script>
+</body>
+</html>

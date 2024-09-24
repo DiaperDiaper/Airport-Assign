@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Utilities Portal</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('Portal.jpg'); /* Replace with your actual background image */
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: white;
+        }
+        .portal {
+            background-color: rgba(0, 0, 0, 0.7); /* Transparent black background for contrast */
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            margin-bottom: 30px;
+        }
+        .utility-button {
+            background-color: red;
+            color: white;
+            padding: 15px;
+            margin: 10px;
+            width: 100%;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+        .utility-button:hover {
+            background-color: darkred;
+        }
+        .search-bar {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .search-bar input {
+            padding: 10px;
+            width: 70%;
+            border: 1px solid #ccc;
+            border-radius: 5px 0 0 5px;
+            font-size: 16px;
+        }
+        .search-bar button {
+            padding: 10px;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            background-color: red;
+            color: white;
+            cursor: pointer;
+        }
+        .search-bar button:hover {
+            background-color: darkred;
+        }
+        #searchResult {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="portal">
+        <h1>Flight Utilities Portal</h1>
+
+        <button class="utility-button" onclick="window.location.href='runwaywind.html'">Runway Wind Calculator</button>
+        <button class="utility-button" onclick="window.location.href='index.html'">Stand Assigner</button>
+        <button class="utility-button" onclick="window.location.href='metar.html'">METAR Fetcher</button>
+
+        <div class="search-bar">
+            <input type="text" id="icaoInput" placeholder="Search Airport by ICAO Code" onkeydown="handleSlashCommand(event)">
+            <button onclick="searchAirport()">Search</button>
+        </div>
+
+        <div id="searchResult"></div>
+    </div>
+
+    <script>
+        // METAR fetcher airport names (replace with actual METAR airport names)
+        const airports = {
+            'FAOR': 'OR Tambo International Airport',
+            'FACT': 'Cape Town International Airport',
+            'FAle': 'King Shaka International Airport',
+            'FAPE': 'Port Elizabeth Airport',
+            'FALA': 'Lanseria International Airport',
+            'FABL': 'Bloemfontein International Airport',
+            // Add more airports as per your METAR fetcher list
+        };
+
+        // Function to search for an airport based on ICAO code
+        function searchAirport() {
+            const icaoCode = document.getElementById('icaoInput').value.toUpperCase();
+            const result = airports[icaoCode];
+
+            const searchResultDiv = document.getElementById('searchResult');
+            if (result) {
+                searchResultDiv.innerHTML = `<p>Airport: ${result}</p>`;
+            } else {
+                searchResultDiv.innerHTML = `<p>Airport not found. Please enter a valid ICAO code.</p>`;
+            }
+        }
+
+        // Function to handle '/' key command to focus the input field
+        function handleSlashCommand(event) {
+            if (event.key === '/') {
+                event.preventDefault();  // Prevent typing the slash in the input field
+                document.getElementById('icaoInput').focus();
+            }
+        }
+
+        // Add event listener to the document to trigger '/' key focus anywhere on the page
+        document.addEventListener('keydown', function(event) {
+            if (event.key === '/') {
+                event.preventDefault();
+                document.getElementById('icaoInput').focus();
+            }
+        });
+    </script>
+
+</body>
+</html>
