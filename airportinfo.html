@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airport Information Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            align-content: center;
+            position: relative;
+        }
+        input {
+            padding: 10px;
+            width: 300px;
+            margin-bottom: 20px;
+            position: relative;
+            
+        }
+        .airport {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .hidden {
+            display: none;
+        }
+        .suggestions {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            max-height: 150px;
+            overflow-y: auto;
+            position: absolute;
+            background: white;
+            width: 300px;
+            z-index: 1000;
+        }
+        .suggestions div {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .suggestions div:hover {
+            background-color: #f0f0f0;
+        }
+        .home-button {
+            background-color: red; /* Green background */
+            border: none; /* Remove borders */
+            color: white; /* White text */
+            padding: 15px 32px; /* Padding */
+            text-align: center; /* Center the text */
+            text-decoration: none; /* Remove underline */
+            display: block; /* Change to block to take full width */
+            font-size: 16px; /* Increase font size */
+            margin: 10px auto; /* Center with auto left and right margin */
+            cursor: pointer; /* Pointer/hand icon */
+            border-radius: 12px; /* Rounded corners */
+            width: fit-content; /* Make width fit content */
+        }
+
+        .home-button:hover {
+            background-color: darkred; /* Darker green on hover */
+        }
+    </style>
+</head>
+<body>
+    <a href="Main.html" class="home-button">Go to Home</a>
+<h1 align="center">Airport Information Search</h1>
+<input type="text" id="search" placeholder="Enter ICAO code or airport name..." onkeyup="searchAirports()">
+<div class="suggestions" id="suggestions"></div>
+
+<div id="airportList">
+    <!-- Airport information will be dynamically inserted here -->
+</div>
+
+<script>
+    const airports = [
+        { name: "O.R. Tambo International Airport", icao: "FAOR", runways: [{ id: "03R/21L", length: "3,600 meters" }, { id: "03L/21R", length: "3,400 meters" }] },
+        { name: "Cape Town International Airport", icao: "FACT", runways: [{ id: "01/19", length: "3,400 meters" }, { id: "16/34", length: "3,200 meters" }] },
+        { name: "King Shaka International Airport", icao: "FALE", runways: [{ id: "06/24", length: "3,700 meters" }] },
+        { name: "Chief Dawid Stuurman International Airport", icao: "FAPE", runways: [{ id: "08/26", length: "3,600 meters" }] },
+        { name: "Lanseria International Airport", icao: "FALA", runways: [{ id: "07/25", length: "3,600 meters" }] },
+        { name: "Bram Fischer International Airport", icao: "FABL", runways: [{ id: "11/29", length: "3,300 meters" }] },
+        { name: "Andrew's Field Airport", icao: "FAAF", runways: [{ id: "09/27", length: "1,200 meters" }] },
+        { name: "Aggeneys Airport", icao: "FAAG", runways: [{ id: "14/32", length: "1,300 meters" }] },
+        { name: "Alexander Bay Airport", icao: "FAAB", runways: [{ id: "10/28", length: "1,800 meters" }] },
+        { name: "Aliwal North Airport", icao: "FAAN", runways: [{ id: "12/30", length: "1,300 meters" }] },
+        { name: "Alkantpan Airport", icao: "FACO", runways: [{ id: "08/26", length: "1,200 meters" }] },
+        { name: "Alldays Airport", icao: "FAAL", runways: [{ id: "17/35", length: "1,600 meters" }] },
+        { name: "Barberton Airport", icao: "FABR", runways: [{ id: "14/32", length: "1,400 meters" }] },
+        { name: "Tommy's Field", icao: "FATF", runways: [{ id: "09/27", length: "1,100 meters" }] },
+        { name: "Bethlehem Airport", icao: "FABM", runways: [{ id: "15/33", length: "1,400 meters" }] },
+        { name: "Bhisho Airport", icao: "FABE", runways: [{ id: "11/29", length: "1,800 meters" }] },
+        { name: "Bothaville Airport", icao: "FABO", runways: [{ id: "08/26", length: "1,200 meters" }] },
+        { name: "Brakpan Airport", icao: "FABB", runways: [{ id: "16/34", length: "1,500 meters" }] },
+        { name: "Brits Airfield", icao: "FABS", runways: [{ id: "09/27", length: "1,200 meters" }] },
+        { name: "Bultfontein Airport", icao: "FABU", runways: [{ id: "12/30", length: "1,500 meters" }] },
+        { name: "Calvinia Airport", icao: "FACV", runways: [{ id: "04/22", length: "1,600 meters" }] },
+        { name: "Carnarvon Airport", icao: "FACN", runways: [{ id: "16/34", length: "1,600 meters" }] },
+        { name: "Cradock Airport", icao: "FACD", runways: [{ id: "09/27", length: "1,500 meters" }] },
+        { name: "Clanwilliam Airfield", icao: "FACW", runways: [{ id: "11/29", length: "1,200 meters" }] },
+        { name: "Durban International Airport", icao: "FADN", runways: [{ id: "05/23", length: "3,000 meters" }] },
+        { name: "East London Airport", icao: "FAEL", runways: [{ id: "09/27", length: "2,000 meters" }] },
+        { name: "Ellisras Airport", icao: "FAER", runways: [{ id: "08/26", length: "1,500 meters" }] },
+        { name: "Empangeni Airport", icao: "FAEM", runways: [{ id: "12/30", length: "1,300 meters" }] },
+        { name: "Ermelo Airport", icao: "FAEO", runways: [{ id: "12/30", length: "1,400 meters" }] },
+        { name: "Ficksburg Airport", icao: "FAFB", runways: [{ id: "04/22", length: "1,400 meters" }] },
+        { name: "Cape Winelands Airport", icao: "FAWN", runways: [{ id: "17/35", length: "1,500 meters" }] },
+        { name: "Gariep Dam Airport", icao: "FAHV", runways: [{ id: "12/30", length: "1,200 meters" }] },
+        { name: "George Airport", icao: "FAGG", runways: [{ id: "10/28", length: "3,200 meters" }] },
+        { name: "Giyani Airport", icao: "FAGI", runways: [{ id: "15/33", length: "1,300 meters" }] },
+        { name: "Graaff Reinet Airport", icao: "FAGR", runways: [{ id: "11/29", length: "1,200 meters" }] },
+        { name: "Grahamstown Airport", icao: "FAGT", runways: [{ id: "14/32", length: "1,500 meters" }] },
+        { name: "Greytown Airport", icao: "FAGY", runways: [{ id: "17/35", length: "1,400 meters" }] },
+        { name: "Harmony Airport", icao: "FAHA", runways: [{ id: "08/26", length: "1,600 meters" }] },
+        { name: "Harrismith Airport", icao: "FAHR", runways: [{ id: "14/32", length: "1,400 meters" }] },
+        { name: "Hazyview Airport", icao: "FAHW", runways: [{ id: "09/27", length: "1,200 meters" }] },
+        { name: "Heidelberg Airport", icao: "FAHG", runways: [{ id: "12/30", length: "1,500 meters" }] },
+        { name: "Hluhluwe Airport", icao: "FAHL", runways: [{ id: "08/26", length: "1,600 meters" }] },
+        { name: "Hoedspruit Airport", icao: "FAHP", runways: [{ id: "12/30", length: "1,800 meters" }] },
+        { name: "Hofmeyr Airport", icao: "FAHM", runways: [{ id: "14/32", length: "1,200 meters" }] },
+        { name: "Hopetown Airport", icao: "FAHO", runways: [{ id: "16/34", length: "1,200 meters" }] },
+        { name: "Howick Airport", icao: "FAKW", runways: [{ id: "09/27", length: "1,400 meters" }] },
+        { name: "Husab Airport", icao: "FAHS", runways: [{ id: "12/30", length: "1,600 meters" }] },
+        { name: "Huskisson Airport", icao: "FAVJ", runways: [{ id: "08/26", length: "1,400 meters" }] },
+        { name: "Kriel Airport", icao: "FAKR", runways: [{ id: "15/33", length: "1,200 meters" }] },
+        { name: "Kroonstad Airport", icao: "FAKR", runways: [{ id: "09/27", length: "1,500 meters" }] },
+        { name: "Kuwait Airport", icao: "FAMQ", runways: [{ id: "14/32", length: "1,600 meters" }] },
+        { name: "Ladysmith Airport", icao: "FALY", runways: [{ id: "17/35", length: "1,200 meters" }] },
+        { name: "Langebaanweg Airport", icao: "FALB", runways: [{ id: "01/19", length: "2,500 meters" }] },
+        { name: "Limpopo Airport", icao: "FALP", runways: [{ id: "11/29", length: "1,200 meters" }] },
+        { name: "Lusikisiki Airport", icao: "FALU", runways: [{ id: "15/33", length: "1,600 meters" }] },
+        { name: "Malelane Airport", icao: "FAML", runways: [{ id: "16/34", length: "1,200 meters" }] },
+        { name: "Maputo Airport", icao: "FAMO", runways: [{ id: "08/26", length: "1,800 meters" }] },
+        { name: "Mokhotlong Airport", icao: "FAMK", runways: [{ id: "14/32", length: "1,200 meters" }] },
+        { name: "Mokopane Airport", icao: "FAMO", runways: [{ id: "10/28", length: "1,600 meters" }] },
+        { name: "Nelspruit Airport", icao: "FANL", runways: [{ id: "11/29", length: "1,500 meters" }] },
+        { name: "Nqutu Airport", icao: "FANQ", runways: [{ id: "12/30", length: "1,200 meters" }] },
+        { name: "Pietermaritzburg Airport", icao: "FAPM", runways: [{ id: "08/26", length: "2,100 meters" }] },
+        { name: "Polokwane Airport", icao: "FAPO", runways: [{ id: "16/34", length: "2,000 meters" }] },
+        { name: "Potchefstroom Airport", icao: "FAPC", runways: [{ id: "03/21", length: "1,200 meters" }] },
+        { name: "Pretoria Airport", icao: "FAPT", runways: [{ id: "11/29", length: "1,600 meters" }] },
+        { name: "Richards Bay Airport", icao: "FARB", runways: [{ id: "05/23", length: "2,300 meters" }] },
+        { name: "Saldanha Bay Airport", icao: "FASB", runways: [{ id: "02/20", length: "1,800 meters" }] },
+        { name: "Sishen Airport", icao: "FASI", runways: [{ id: "11/29", length: "1,200 meters" }] },
+        { name: "Skukuza Airport", icao: "FASZ", runways: [{ id: "06/24", length: "1,500 meters" }] },
+        { name: "Tzaneen Airport", icao: "FATZ", runways: [{ id: "12/30", length: "1,200 meters" }] },
+        { name: "Umtata Airport", icao: "FAUT", runways: [{ id: "08/26", length: "1,400 meters" }] },
+        { name: "Vryburg Airport", icao: "FAVB", runways: [{ id: "12/30", length: "1,200 meters" }] },
+        { name: "Wellington Airport", icao: "FAWE", runways: [{ id: "05/23", length: "1,400 meters" }] },
+        { name: "Zululand Airport", icao: "FAZU", runways: [{ id: "14/32", length: "1,200 meters" }] },
+    ];
+
+    function searchAirports() {
+        const searchValue = document.getElementById("search").value.toLowerCase();
+        const airportList = document.getElementById("airportList");
+        const suggestions = document.getElementById("suggestions");
+        airportList.innerHTML = '';
+        suggestions.innerHTML = '';
+
+        const filteredAirports = airports.filter(airport =>
+            airport.icao.toLowerCase().includes(searchValue) || airport.name.toLowerCase().includes(searchValue)
+        );
+
+        // Display suggestions
+        filteredAirports.forEach(airport => {
+            const suggestionDiv = document.createElement("div");
+            suggestionDiv.textContent = `${airport.name} (${airport.icao})`;
+            suggestionDiv.onclick = function() {
+                document.getElementById("search").value = airport.icao;
+                searchAirports();
+                suggestions.innerHTML = '';
+            };
+            suggestions.appendChild(suggestionDiv);
+        });
+
+        // Display airport information
+        if (searchValue) {
+            const filteredAirportsForDisplay = airports.filter(airport =>
+                airport.icao.toLowerCase().includes(searchValue) || airport.name.toLowerCase().includes(searchValue)
+            );
+
+            filteredAirportsForDisplay.forEach(airport => {
+                const airportDiv = document.createElement("div");
+                airportDiv.className = "airport";
+                airportDiv.innerHTML = `<strong>${airport.name} (${airport.icao})</strong><br>
+                    <strong>Runways:</strong><br>${airport.runways.map(runway => `${runway.id} - Length: ${runway.length}`).join('<br>')}`;
+                airportList.appendChild(airportDiv);
+            });
+        }
+
+        // Hide suggestions if no input
+        if (searchValue === '') {
+            suggestions.innerHTML = '';
+        }
+        
+        if (filteredAirports.length === 0) {
+            airportList.innerHTML = '<div>No airports found</div>';
+        }
+    }
+</script>
+
+</body>
+</html>
