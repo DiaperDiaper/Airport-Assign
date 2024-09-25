@@ -24,13 +24,15 @@
             max-width: 400px;
         }
         #icao {
-            width: 100%;
+            width: 80%; /* Make the input smaller */
+            max-width: 200px; /* You can also use a fixed width */
             padding: 10px;
             font-size: 16px;
             margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
             text-transform: uppercase;
+            maxlength="4"; /* Restrict input to 4 characters */
         }
         button {
             background-color: red;
@@ -71,13 +73,12 @@
             background-color: darkred; /* Darker green on hover */
         }
     </style>
-    </style>
 </head>
 <body>
     <div class="container">
         <a href="Main.html" class="home-button">Go to Home</a>
         <h1>Latest METAR Data</h1>
-        <input type="text" id="icao" placeholder="Enter ICAO Code" oninput="this.value = this.value.toUpperCase();" />
+        <input type="text" id="icao" placeholder="Enter ICAO Code" oninput="this.value = this.value.toUpperCase();" maxlength="4" />
         <button onclick="getMetar()">Get METAR</button>
         <div id="metar"></div>
     </div>
@@ -124,7 +125,6 @@
                 <div class="metar-section"><strong>Dew Point:</strong> ${metarData.dewpoint.celsius} °C</div>
                 <div class="metar-section"><strong>QNH (Pressure):</strong> ${metarData.barometer.hpa} hPa</div>
                 <div class="metar-section"><strong>Clouds:</strong> ${formatClouds(metarData.clouds)}</div>
-                
             `;
         }
 
