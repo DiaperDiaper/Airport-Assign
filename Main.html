@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="ATSA.png" type="image/x-icon">
     <title>Flight Utilities Portal</title>
     <style>
         body {
@@ -101,6 +102,36 @@
         </div>
 
         <div id="searchResult"></div>
+        <div id="zulu-date"></div>
+    <div id="zulu-time"></div>
+    <script>
+        function updateZuluDateTime() {
+            const now = new Date();
+            const optionsDate = {
+                timeZone: 'UTC',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+            };
+            const optionsTime = {
+                timeZone: 'UTC',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            };
+
+            const zuluDate = now.toLocaleDateString('en-GB', optionsDate); // Format: DD/MM/YYYY
+            const zuluTime = now.toLocaleTimeString('en-US', optionsTime);
+
+            document.getElementById('zulu-date').innerText = `Date: ${zuluDate}`;
+            document.getElementById('zulu-time').innerText = `Time: ${zuluTime}`;
+        }
+
+        // Update Zulu time and date every second
+        setInterval(updateZuluDateTime, 1000);
+        updateZuluDateTime(); // Initial call to display time and date immediately
+    </script>
     </div>
 
     <footer>
