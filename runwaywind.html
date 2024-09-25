@@ -65,21 +65,21 @@
         }
 
         .home-button {
-            background-color: red; /* Green background */
-            border: none; /* Remove borders */
-            color: white; /* White text */
-            padding: 15px 32px; /* Padding */
-            text-align: center; /* Center the text */
-            text-decoration: none; /* Remove underline */
-            display: inline-block; /* Make it inline */
-            font-size: 16px; /* Increase font size */
+            background-color: red; 
+            border: none; 
+            color: white; 
+            padding: 15px 32px; 
+            text-align: center; 
+            text-decoration: none; 
+            display: inline-block; 
+            font-size: 16px; 
             margin: 10px 2px;
-            cursor: pointer; /* Pointer/hand icon */
-            border-radius: 12px; /* Rounded corners */
+            cursor: pointer; 
+            border-radius: 12px; 
         }
 
         .home-button:hover {
-            background-color: darkred; /* Darker green on hover */
+            background-color: darkred;
         }
     </style>
 </head>
@@ -90,13 +90,13 @@
         <h2>Runway Wind Calculator</h2>
         <form id="windForm">
             <label for="runwayHeading">Runway Heading (degrees):</label>
-            <input type="number" id="runwayHeading" min="0" max="360" required>
+            <input type="number" id="runwayHeading" min="0" max="360" required inputmode="numeric">
 
             <label for="windDirection">Wind Direction (degrees):</label>
-            <input type="number" id="windDirection" min="0" max="360" required>
+            <input type="number" id="windDirection" min="0" max="360" required inputmode="numeric">
 
             <label for="windSpeed">Wind Speed (knots):</label>
-            <input type="number" id="windSpeed" min="0" required>
+            <input type="number" id="windSpeed" min="0" required inputmode="numeric">
 
             <button type="button" onclick="calculateWind()">Calculate Wind Components</button>
         </form>
@@ -116,17 +116,13 @@
             const windDirection = parseFloat(document.getElementById('windDirection').value);
             const windSpeed = parseFloat(document.getElementById('windSpeed').value);
 
-            // Calculate wind angle relative to the runway
             const windAngle = (windDirection - runwayHeading) * Math.PI / 180;
 
-            // Calculate headwind, tailwind, and crosswind components
             const headwind = Math.round(windSpeed * Math.cos(windAngle));
             const crosswind = Math.round(windSpeed * Math.sin(windAngle));
 
-            // If the headwind component is negative, it's a tailwind
             const tailwind = Math.abs(headwind < 0 ? headwind : 0);
 
-            // Update the results in the HTML
             document.getElementById('headwind').innerText = `Headwind: ${headwind > 0 ? headwind : 0} knots`;
             document.getElementById('crosswind').innerText = `Crosswind: ${Math.abs(crosswind)} knots`;
             document.getElementById('tailwind').innerText = `Tailwind: ${tailwind} knots`;

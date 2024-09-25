@@ -48,6 +48,7 @@
             margin-top: 20px;
             display: flex;
             justify-content: center;
+            text-transform: uppercase;
         }
         .search-bar input {
             padding: 10px;
@@ -55,6 +56,7 @@
             border: 1px solid #ccc;
             border-radius: 5px 0 0 5px;
             font-size: 16px;
+            text-transform: uppercase;
         }
         .search-bar button {
             padding: 10px;
@@ -75,14 +77,14 @@
 <body>
 
     <div class="portal">
-        <h1>Flight Utilities Portal</h1>
+        <h1>Aviator Toolkit</h1>
 
         <button class="utility-button" onclick="window.location.href='runwaywind.html'">Runway Wind Calculator</button>
         <button class="utility-button" onclick="window.location.href='index.html'">Stand Assigner</button>
         <button class="utility-button" onclick="window.location.href='metar.html'">METAR Fetcher</button>
 
         <div class="search-bar">
-            <input type="text" id="icaoInput" placeholder="Search Airport by ICAO Code" onkeydown="handleSlashCommand(event)">
+            <input type="text" id="icaoInput" placeholder="Search Airport" onkeydown="handleSlashCommand(event)">
             <button onclick="searchAirport()">Search</button>
         </div>
 
