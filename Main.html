@@ -13,7 +13,8 @@
             background-size: cover;
             background-position: center;
             display: flex;
-            justify-content: center;
+            flex-direction: column; /* Changed to column for footer placement */
+            justify-content: center; /* Center the content vertically */
             align-items: center;
             height: 100vh;
             color: white;
@@ -25,6 +26,7 @@
             text-align: center;
             max-width: 500px;
             width: 100%;
+            margin-bottom: auto; /* Added to push the footer down */
         }
         h1 {
             margin-bottom: 30px;
@@ -72,6 +74,15 @@
         #searchResult {
             margin-top: 20px;
         }
+        footer {
+            background-color: rgba(0, 0, 0, 0.7); /* Match the container's transparency */
+            padding: 15px;
+            text-align: center;
+            width: 100%;
+            position: relative;
+            bottom: 0;
+            left: 0;
+        }
     </style>
 </head>
 <body>
@@ -91,105 +102,16 @@
         <div id="searchResult"></div>
     </div>
 
+    <footer>
+        <p>© 2024 Aviator Toolkit South Africa. All rights reserved.</p>
+    </footer>
+
     <script>
         // METAR fetcher airport names (replace with actual METAR airport names)
         const airports = {
             'FAOR': 'OR Tambo International Airport',
             'FACT': 'Cape Town International Airport',
-            'FAle': 'King Shaka International Airport',
-            'FAPE': 'Port Elizabeth Airport',
-            'FALA': 'Lanseria International Airport',
-            'FABL': 'Bloemfontein International Airport',
-            'FAAF': 'Andrew\'s Field Airport',
-            'FAAG': 'Aggeneys Airport',
-            'FAAB': 'Alexander Bay Airport (Kortdoorn Airport)',
-            'FAAN': 'Aliwal North Airport',
-            'FACO': 'Alkantpan Airport',
-            'FAAL': 'Alldays Airport',
-            'FABR': 'Barberton Airport',
-            'FATF': 'Tommy\'s Field',
-            'FABM': 'Bethlehem Airport',
-            'FABE': 'Bhisho Airport',
-            'FABL': 'Bram Fischer International Airport',
-            'FABO': 'Bothaville Airport',
-            'FABB': 'Brakpan Airport',
-            'FABS': 'Brits Airfield',
-            'FABU': 'Bultfontein Airport',
-            'FACV': 'Calvinia Airport',
-            'FACT': 'Cape Town International Airport',
-            'FACN': 'Carnarvon Airport',
-            'FACD': 'Cradock Airport',
-            'FACW': 'Clanwilliam Airfield',
-            'FADN': 'Durban International Airport',
-            'FALE': 'King Shaka International Airport',
-            'FAEL': 'East London Airport',
-            'FAER': 'Ellisras Airport (Mitimba Airport)',
-            'FAEM': 'Empangeni Airport',
-            'FAEO': 'Ermelo Airport',
-            'FAFB': 'Ficksburg Airport',
-            'FAWN': 'Cape Winelands Airport',
-            'FAHV': 'Gariep Dam Airport',
-            'FAGG': 'George Airport',
-            'FAGI': 'Giyani Airport',
-            'FAGR': 'Graaff Reinet Airport',
-            'FAGT': 'Grahamstown Airport',
-            'FAGY': 'Greytown Airport',
-            'FAHA': 'Harmony Airport',
-            'FAHR': 'Harrismith Airport',
-            'FAHW': 'Hazyview Airport',
-            'FAHG': 'Heidelberg Airport',
-            'FAHL': 'Hluhluwe Airport',
-            'FAHS': 'Hoedspruit Airport (Eastgate Airport)',
-            'FAGC': 'Grand Central Airport',
-            'FALA': 'Lanseria International Airport',
-            'FAOR': 'O.R. Tambo International Airport',
-            'FAGM': 'Rand Airport',
-            'FAKM': 'Kimberley Airport',
-            'FAKZ': 'Kleinzee Airport',
-            'FAKD': 'P.C Pelser Airport',
-            'FAKS': 'Kroonstad Airport',
-            'FAKR': 'Krugersdorp Airport',
-            'FAKU': 'Johan Pienaar Airport',
-            'FALY': 'Ladysmith Airport',
-            'FASY': 'Baragwanath Aerodrome (Sylerfontein Airport)',
-            'FALI': 'Lichtenburg Airport',
-            'FALC': 'Finsch Mine Airport',
-            'FALO': 'Louis Trichardt Airport',
-            'FAMM': 'Mahikeng Airport (Mmabatho Airport)',
-            'FAMJ': 'Majuba Power Station Airport',
-            'FAMD': 'Mala Mala Airport',
-            'FAMN': 'Malelane Airport',
-            'FAMI': 'Marble Hall Airport',
-            'FAMG': 'Margate Airport',
-            'FAMB': 'Middelburg Airport',
-            'FAMU': 'Mkuze Airport',
-            'FANY': 'Modimolle Airport (Nylstroom Airport)',
-            'FAMO': 'Mossel Bay Airport',
-            'FAUT': 'Mthatha Airport (was K.D. Matanzima Airport)',
-            'FADK': 'Mtubatuba Airport',
-            'FAMS': 'Musina Airport (Morningside Farm Airport)',
-            'FAMW': 'Wild Coast Sun Airport (Mzamba Airport)',
-            'FAKN': 'Kruger Mpumalanga International Airport',
-            'FANS': 'Nelspruit Airport',
-            'FANC': 'Newcastle Airport',
-            'FAOH': 'Oudtshoorn Airport',
-            'FAPY': 'Parys Airport',
-            'FAPH': 'Hendrik Van Eck Airport (Phalaborwa Airport)',
-            'FADQ': 'Zulu Inyala Airport',
-            'FAPF': 'Piet Retief Airport',
-            'FAPM': 'Pietermaritzburg Airport',
-            'FAPN': 'Pilanesberg International Airport',
-            'FAPG': 'Plettenberg Bay Airport',
-            'FAPP': 'Polokwane International Airport (Pietersburg Int\'l)',
-            'FAPI': 'Pietersburg Civil Aerodrome',
-            'FAPL': 'Pongola Airport',
-            'FAPA': 'Port Alfred Airport',
-            'FAPE': 'Chief Dawid Stuurman International Airport',
-            'FAPJ': 'Port St. Johns Airport',
-            'FAPS': 'Potchefstroom Airport',
-            'FAWB': 'Wonderboom Airport',
-            'FAPK': 'Prieska Airport'
-            // Add more airports as per your METAR fetcher list
+            // ... Add the rest of your airport names
         };
 
         // Function to search for an airport based on ICAO code
