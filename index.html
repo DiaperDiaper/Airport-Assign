@@ -69,6 +69,7 @@
         input {
             text-transform: uppercase;
         }
+
         .home-button {
             background-color: red; /* Green background */
             border: none; /* Remove borders */
@@ -76,11 +77,12 @@
             padding: 15px 32px; /* Padding */
             text-align: center; /* Center the text */
             text-decoration: none; /* Remove underline */
-            display: inline-block; /* Make it inline */
+            display: block; /* Change to block to take full width */
             font-size: 16px; /* Increase font size */
-            margin: 10px 2px;
+            margin: 10px auto; /* Center with auto left and right margin */
             cursor: pointer; /* Pointer/hand icon */
             border-radius: 12px; /* Rounded corners */
+            width: fit-content; /* Make width fit content */
         }
 
         .home-button:hover {
@@ -91,7 +93,7 @@
 <body>
     <div class="container">
         <a href="Main.html" class="home-button">Go to Home</a>
-        <h1>Aircraft Stand Assignment</h1>
+        <h1>Stand Assignment</h1>
         <form id="assignmentForm">
             <label for="icaoCode">Select Airport (ICAO Code):</label>
             <select id="icaoCode" name="icaoCode" required>
