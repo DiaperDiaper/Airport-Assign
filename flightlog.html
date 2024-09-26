@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="ATSA.png" type="image/x-icon">
+    <title>FlightLog - Digital Logbook</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input[type="text"],
+        input[type="date"],
+        input[type="tel"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: red;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: darkred;
+        }
+        #logContainer {
+            margin-top: 20px;
+        }
+        .logEntry {
+            background: #fff;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+        }
+        .home-button {
+            background-color: red; /* Green background */
+            border: none; /* Remove borders */
+            color: white; /* White text */
+            padding: 15px 32px; /* Padding */
+            text-align: center; /* Center the text */
+            text-decoration: none; /* Remove underline */
+            display: block; /* Change to block to take full width */
+            font-size: 16px; /* Increase font size */
+            margin: 10px auto; /* Center with auto left and right margin */
+            cursor: pointer; /* Pointer/hand icon */
+            border-radius: 12px; /* Rounded corners */
+            width: fit-content; /* Make width fit content */
+        }
+
+        .home-button:hover {
+            background-color: darkred; /* Darker green on hover */
+        }
+    </style>
+</head>
+<body>
+    <a href="Main.html" class="home-button">Go to Home</a>
+    <h1>FlightLog</h1>
+    <form id="flightLogForm">
+        <label for="date">Date:</label>
+        <input type="date" id="date" required>
+        
+        <label for="aircraftType">Aircraft Type:</label>
+        <input type="text" id="aircraftType" required>
+        
+        <label for="flightDuration">Flight Duration (HHMM):</label>
+        <input type="tel" id="flightDuration" required placeholder="e.g., 0130" maxlength="4" pattern="[0-9]*">
+        
+        <label for="departureAirport">Departure Airport (4 letters):</label>
+        <input type="text" id="departureAirport" required maxlength="4" oninput="this.value = this.value.toUpperCase();">
+        
+        <label for="arrivalAirport">Arrival Airport (4 letters):</label>
+        <input type="text" id="arrivalAirport" required maxlength="4" oninput="this.value = this.value.toUpperCase();">
+        
+        <label for="remarks">Remarks:</label>
+        <textarea id="remarks" oninput="this.value = this.value.toUpperCase();"></textarea>
+        
+        <button type="submit">Add Flight Log</button>
+    </form>
+
+    <div id="logContainer"></div>
+    <div id="totalHours"></div>
+
+    <script>
+        const flightLogForm = document.getElementById('flightLogForm');
+        const flightLogs = JSON.parse(localStorage.getItem('flightLogs')) || [];
+
+        flightLogForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const flightDurationValue = flightLogForm.flightDuration.value;
+            const hours = flightDurationValue.slice(0, 2);
+            const minutes = flightDurationValue.slice(2, 4);
+            const formattedDuration = `${hours}:${minutes}`;
+            
+            const newLog = {
+                date: flightLogForm.date.value,
+                aircraftType: flightLogForm.aircraftType.value,
+                flightDuration: formattedDuration,
+                departureAirport: flightLogForm.departureAirport.value,
+                arrivalAirport: flightLogForm.arrivalAirport.value,
+                remarks: flightLogForm.remarks.value.toUpperCase(), // Ensures remarks are stored in uppercase
+            };
+
+            flightLogs.push(newLog);
+            localStorage.setItem('flightLogs', JSON.stringify(flightLogs));
+            flightLogForm.reset();
+            displayFlightLogs();
+            calculateTotalHours();
+        });
+
+        function displayFlightLogs() {
+            const logContainer = document.getElementById('logContainer');
+            logContainer.innerHTML = '';
+            flightLogs.forEach((log, index) => {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'logEntry';
+                logEntry.textContent = `${log.date} - ${log.aircraftType} - ${log.flightDuration} - ${log.departureAirport} to ${log.arrivalAirport} - ${log.remarks}`;
+                
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete Flight';
+                deleteButton.onclick = () => {
+                    flightLogs.splice(index, 1); // Remove the log at the current index
+                    localStorage.setItem('flightLogs', JSON.stringify(flightLogs));
+                    displayFlightLogs();
+                    calculateTotalHours();
+                };
+                
+                logEntry.appendChild(deleteButton);
+                logContainer.appendChild(logEntry);
+            });
+        }
+
+        function calculateTotalHours() {
+            const totalHours = flightLogs.reduce((total, log) => {
+                const [hours, minutes] = log.flightDuration.split(':').map(Number);
+                return total + (hours + minutes / 60);
+            }, 0);
+            const totalHoursContainer = document.getElementById('totalHours');
+            totalHoursContainer.textContent = `Total Flight Hours: ${totalHours.toFixed(2)}`;
+        }
+
+        // Call displayFlightLogs on page load
+        displayFlightLogs();
+        calculateTotalHours();
+    </script>
+
+</body>
+</html>

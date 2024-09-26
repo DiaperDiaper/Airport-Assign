@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="ATSA.png" type="image/x-icon">
+    <title>Flight Route Planner</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #map {
+            height: 400px; /* Reduced height of the map */
+            width: 80%; /* Set a percentage width for responsiveness */
+            margin-top: 20px;
+        }
+        #search {
+            display: flex;
+            flex-direction: column; /* Stack inputs vertically */
+            align-items: center;
+            margin: 20px;
+        }
+        input {
+            padding: 10px;
+            width: 250px;
+            margin: 5px 0; /* Space between input fields */
+            position: relative;
+        }
+        button {
+            padding: 10px;
+        }
+        #suggestions {
+            position: absolute;
+            background-color: white;
+            border: 1px solid #ccc;
+            max-height: 150px;
+            overflow-y: auto;
+            width: 250px;
+            z-index: 1000;
+            display: none; /* Initially hidden */
+        }
+        .suggestion-item {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .suggestion-item:hover {
+            background-color: #f0f0f0;
+        }
+        .home-button {
+            background-color: red; /* Green background */
+            border: none; /* Remove borders */
+            color: white; /* White text */
+            padding: 15px 32px; /* Padding */
+            text-align: center; /* Center the text */
+            text-decoration: none; /* Remove underline */
+            display: block; /* Change to block to take full width */
+            font-size: 16px; /* Increase font size */
+            margin: 10px auto; /* Center with auto left and right margin */
+            cursor: pointer; /* Pointer/hand icon */
+            border-radius: 12px; /* Rounded corners */
+            width: fit-content; /* Make width fit content */
+        }
+
+        .home-button:hover {
+            background-color: darkred; /* Darker green on hover */
+        }
+    </style>
+</head>
+<body>
+    <a href="Main.html" class="home-button">Go to Home</a>
+    <h1>Flight Route Planner</h1>
+    <div id="search">
+        <div style="position: relative; width: 250px;">
+            <input type="text" id="departure" placeholder="Enter Departure Airport" />
+            <div id="departure-suggestions" class="suggestions"></div>
+        </div>
+        <div style="position: relative; width: 250px;">
+            <input type="text" id="arrival" placeholder="Enter Arrival Airport" />
+            <div id="arrival-suggestions" class="suggestions"></div>
+        </div>
+        <button id="planRoute">Plan Route</button>
+    </div>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        const map = L.map('map').setView([-30.5595, 22.9375], 5); // Centered on South Africa
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        const departureInput = document.getElementById('departure');
+        const arrivalInput = document.getElementById('arrival');
+        const departureSuggestionsBox = document.getElementById('departure-suggestions');
+        const arrivalSuggestionsBox = document.getElementById('arrival-suggestions');
+        let departureMarker, arrivalMarker;
+
+        // Function to geocode airport names to coordinates within South Africa
+        async function getCoordinates(airport) {
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${airport}, South Africa`);
+            const data = await response.json();
+            return data.length > 0 ? data : [];
+        }
+
+        // Function to show suggestions
+        async function showSuggestions(input, suggestionsBox, limit) {
+            suggestionsBox.innerHTML = '';
+            if (input.value) { // Only fetch if there's input
+                const airports = await getCoordinates(input.value);
+                const limitedAirports = airports.slice(0, limit); // Limit suggestions to the specified number
+
+                limitedAirports.forEach(airport => {
+                    const suggestionItem = document.createElement('div');
+                    suggestionItem.textContent = airport.display_name;
+                    suggestionItem.classList.add('suggestion-item');
+                    suggestionItem.onclick = () => {
+                        input.value = airport.display_name.split(',')[0]; // Select airport name
+                        suggestionsBox.innerHTML = ''; // Clear suggestions
+                        suggestionsBox.style.display = 'none'; // Hide suggestions
+                    };
+                    suggestionsBox.appendChild(suggestionItem);
+                });
+                // Show or hide suggestions based on airport data
+                suggestionsBox.style.display = limitedAirports.length > 0 ? 'block' : 'none';
+            } else {
+                suggestionsBox.style.display = 'none'; // Hide suggestions if input is empty
+            }
+        }
+
+        departureInput.addEventListener('input', () => showSuggestions(departureInput, departureSuggestionsBox, 2));
+        arrivalInput.addEventListener('input', () => showSuggestions(arrivalInput, arrivalSuggestionsBox, 2));
+
+        document.getElementById('planRoute').addEventListener('click', async () => {
+            const departure = departureInput.value;
+            const arrival = arrivalInput.value;
+
+            const departureCoords = await getCoordinates(departure);
+            const arrivalCoords = await getCoordinates(arrival);
+
+            if (departureCoords.length > 0) {
+                if (departureMarker) {
+                    map.removeLayer(departureMarker);
+                }
+                const depCoords = { lat: departureCoords[0].lat, lon: departureCoords[0].lon };
+                departureMarker = L.marker([depCoords.lat, depCoords.lon]).addTo(map)
+                    .bindPopup(`Departure: ${departure}`)
+                    .openPopup();
+                map.setView([depCoords.lat, depCoords.lon], 5);
+            } else {
+                alert('Departure airport not found in South Africa!');
+            }
+
+            if (arrivalCoords.length > 0) {
+                if (arrivalMarker) {
+                    map.removeLayer(arrivalMarker);
+                }
+                const arrCoords = { lat: arrivalCoords[0].lat, lon: arrivalCoords[0].lon };
+                arrivalMarker = L.marker([arrCoords.lat, arrCoords.lon]).addTo(map)
+                    .bindPopup(`Arrival: ${arrival}`)
+                    .openPopup();
+            } else {
+                alert('Arrival airport not found in South Africa!');
+            }
+
+            if (departureCoords.length > 0 && arrivalCoords.length > 0) {
+                L.polyline([[departureCoords[0].lat, departureCoords[0].lon], [arrivalCoords[0].lat, arrivalCoords[0].lon]], {color: 'blue'}).addTo(map);
+            }
+        });
+
+        // Hide suggestions when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!departureSuggestionsBox.contains(event.target) && event.target !== departureInput) {
+                departureSuggestionsBox.innerHTML = '';
+                departureSuggestionsBox.style.display = 'none'; // Hide suggestions
+            }
+            if (!arrivalSuggestionsBox.contains(event.target) && event.target !== arrivalInput) {
+                arrivalSuggestionsBox.innerHTML = '';
+                arrivalSuggestionsBox.style.display = 'none'; // Hide suggestions
+            }
+        });
+    </script>
+</body>
+</html>
