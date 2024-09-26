@@ -73,6 +73,48 @@
         .home-button:hover {
             background-color: darkred; /* Darker green on hover */
         }
+          /* Tooltip container */
+    .tooltip {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+      }
+  
+      /* Tooltip text */
+      .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 160px;
+        background-color: #555;
+        color: #fff;
+        text-align: center;
+        border-radius: 5px;
+        padding: 5px 0;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%; /* Position the tooltip above the text */
+        left: 50%;
+        margin-left: -80px; /* Center the tooltip */
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+  
+      /* Show the tooltip when hovering */
+      .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+      }
+  
+      /* Arrow for the tooltip */
+      .tooltip .tooltiptext::after {
+        content: "";
+        position: absolute;
+        top: 100%; /* At the bottom of the tooltip */
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #555 transparent transparent transparent;
+      }
     </style>
 </head>
 <body>
@@ -80,6 +122,9 @@
         <a href="Main.html" class="home-button">Go to Home</a>
         <h1>Latest METAR Data</h1>
         <input type="text" id="icao" placeholder="Enter ICAO Code" oninput="this.value = this.value.toUpperCase();" maxlength="4" />
+        <div class="tooltip">❓
+            <span class="tooltiptext">METAR is a weather report for pilots, showing real-time conditions at an airport, like temperature, wind speed, visibility, and clouds.</span>
+          </div>
         <button onclick="getMetar()">Get METAR</button>
         <div id="metar"></div>
     </div>

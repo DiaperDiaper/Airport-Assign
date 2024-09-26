@@ -89,6 +89,48 @@
         .home-button:hover {
             background-color: darkred; /* Darker green on hover */
         }
+         /* Tooltip container */
+    .tooltip {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+      }
+  
+      /* Tooltip text */
+      .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 160px;
+        background-color: #555;
+        color: #fff;
+        text-align: center;
+        border-radius: 5px;
+        padding: 5px 0;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%; /* Position the tooltip above the text */
+        left: 50%;
+        margin-left: -80px; /* Center the tooltip */
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+  
+      /* Show the tooltip when hovering */
+      .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+      }
+  
+      /* Arrow for the tooltip */
+      .tooltip .tooltiptext::after {
+        content: "";
+        position: absolute;
+        top: 100%; /* At the bottom of the tooltip */
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #555 transparent transparent transparent;
+      }
     </style>
 </head>
 <body>
@@ -112,7 +154,9 @@
                 <!-- Add more airports if needed -->
             </select>
             
-            <label for="aircraftType">Aircraft Type:</label>
+            <label for="aircraftType">Aircraft Type:<div class="tooltip">❓
+                <span class="tooltiptext">Aircraft type categories like light, medium, heavy, or cargo refer to the aircraft's size</span>
+              </div></label>
             <select id="aircraftType" name="aircraftType" required>
                 <option value="" disabled selected>Select an aircraft type</option>
                 <option value="Light">Light</option>

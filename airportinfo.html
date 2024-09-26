@@ -64,12 +64,59 @@
         .home-button:hover {
             background-color: darkred; /* Darker green on hover */
         }
+        /* Tooltip container */
+    .tooltip {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+      }
+  
+      /* Tooltip text */
+      .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 160px;
+        background-color: #555;
+        color: #fff;
+        text-align: center;
+        border-radius: 5px;
+        padding: 5px 0;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%; /* Position the tooltip above the text */
+        left: 50%;
+        margin-left: -80px; /* Center the tooltip */
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+  
+      /* Show the tooltip when hovering */
+      .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+      }
+  
+      /* Arrow for the tooltip */
+      .tooltip .tooltiptext::after {
+        content: "";
+        position: absolute;
+        top: 100%; /* At the bottom of the tooltip */
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #555 transparent transparent transparent;
+      }
     </style>
 </head>
 <body>
     <a href="Main.html" class="home-button">Go to Home</a>
 <h1 align="center">Airport Information Search</h1>
+<div align="center">
 <input type="text" id="search" placeholder="Enter ICAO code or airport name..." onkeyup="searchAirports()">
+<div class="tooltip">❓
+    <span class="tooltiptext">Search for the Airport by name or ICAO code </span>
+  </div>
+</div>
 <div class="suggestions" id="suggestions"></div>
 
 <div id="airportList">
