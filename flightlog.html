@@ -114,13 +114,25 @@
     <script>
         const flightLogForm = document.getElementById('flightLogForm');
         const flightLogs = JSON.parse(localStorage.getItem('flightLogs')) || [];
-
+        
+        // Check if there is saved chrono time in localStorage
+        const chronoTime = JSON.parse(localStorage.getItem('chronoTime'));
+        if (chronoTime) {
+            // Format the chrono time as HH:MM:SS
+            const formattedChronoTime = `${chronoTime.hours.toString().padStart(2, '0')}:${chronoTime.minutes.toString().padStart(2, '0')}:${chronoTime.seconds.toString().padStart(2, '0')}`;
+            // Pre-fill the flight duration input with the chronometer time
+            flightLogForm.flightDuration.value = formattedChronoTime;
+        
+            // Optionally clear the saved chrono time after retrieving it
+            localStorage.removeItem('chronoTime');
+        }
+        
         flightLogForm.addEventListener('submit', function(event) {
             event.preventDefault();
             
             const flightDurationValue = flightLogForm.flightDuration.value;
             const hours = flightDurationValue.slice(0, 2);
-            const minutes = flightDurationValue.slice(2, 4);
+            const minutes = flightDurationValue.slice(3, 5); // Fixed slice index to 3:5
             const formattedDuration = `${hours}:${minutes}`;
             
             const newLog = {
@@ -131,14 +143,14 @@
                 arrivalAirport: flightLogForm.arrivalAirport.value,
                 remarks: flightLogForm.remarks.value.toUpperCase(), // Ensures remarks are stored in uppercase
             };
-
+        
             flightLogs.push(newLog);
             localStorage.setItem('flightLogs', JSON.stringify(flightLogs));
             flightLogForm.reset();
             displayFlightLogs();
             calculateTotalHours();
         });
-
+        
         function displayFlightLogs() {
             const logContainer = document.getElementById('logContainer');
             logContainer.innerHTML = '';
@@ -160,7 +172,7 @@
                 logContainer.appendChild(logEntry);
             });
         }
-
+        
         function calculateTotalHours() {
             const totalHours = flightLogs.reduce((total, log) => {
                 const [hours, minutes] = log.flightDuration.split(':').map(Number);
@@ -169,10 +181,11 @@
             const totalHoursContainer = document.getElementById('totalHours');
             totalHoursContainer.textContent = `Total Flight Hours: ${totalHours.toFixed(2)}`;
         }
-
+        
         // Call displayFlightLogs on page load
         displayFlightLogs();
         calculateTotalHours();
+        
     </script>
 
 </body>
