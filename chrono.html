@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="ATSA.png" type="image/x-icon">
+    <title>Chronometer</title>
+    <style>
+        .home-button {
+            background-color: red; /* Green background */
+            border: none; /* Remove borders */
+            color: white; /* White text */
+            padding: 15px 32px; /* Padding */
+            text-align: center; /* Center the text */
+            text-decoration: none; /* Remove underline */
+            display: block; /* Change to block to take full width */
+            font-size: 16px; /* Increase font size */
+            margin: 10px auto; /* Center with auto left and right margin */
+            cursor: pointer; /* Pointer/hand icon */
+            border-radius: 12px; /* Rounded corners */
+            width: fit-content; /* Make width fit content */
+            font-family: Arial, sans-serif;
+        }
+        
+        .home-button:hover {
+            background-color: darkred; /* Darker green on hover */
+        }
+    </style>
+    <link rel="stylesheet" href="chrono.css">
+</head>
+<body>
+    <div align="center">
+    <a href="Main.html" class="home-button">Go to Home</a>
+        
+    <div class="chronometer-container">
+        <div class="chronometer-card">
+            <h1 class="chronometer-title">Chronometer</h1>
+            <div id="display" class="chronometer-display">00:00:00</div>
+            <div class="controls">
+                <button id="startStop" class="btn start-stop-btn">Start</button>
+                <button id="reset" class="btn reset-btn">Reset</button>
+            </div>
+        </div>
+    </div>
+</div>
+    <script src="chrono.js"></script>
+</body>
+</html>

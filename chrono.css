@@ -1,0 +1,102 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f3f4f6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.chronometer-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+}
+
+/* Card styling */
+.chronometer-card {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+.chronometer-title {
+    font-size: 2.2rem;
+    color: #3a3a3a;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.chronometer-display {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+    padding: 10px;
+    border-radius: 10px;
+    background: #f0f0f0;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Button styling */
+.controls {
+    display: flex;
+    justify-content: space-around;
+}
+
+.btn {
+    padding: 15px 25px;
+    border-radius: 30px;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.start-stop-btn {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.start-stop-btn:hover {
+    background-color: #0056b3;
+}
+
+.reset-btn {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.reset-btn:hover {
+    background-color: #c82333;
+}
+
+/* Media Queries */
+@media (max-width: 600px) {
+    .chronometer-card {
+        padding: 30px;
+    }
+
+    .chronometer-display {
+        font-size: 3rem;
+    }
+
+    .btn {
+        padding: 12px 20px;
+        font-size: 1rem;
+    }
+}
