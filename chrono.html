@@ -3,9 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="icon" href="ATSA.png" type="image/x-icon">
     <title>Chronometer</title>
     <style>
+        /* Basic styling for the chronometer page */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        #display {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #startStop {
+            background-color: #28a745;
+            color: white;
+        }
+
+        #reset {
+            background-color: #dc3545;
+            color: white;
+        }
         .home-button {
             background-color: red; /* Green background */
             border: none; /* Remove borders */
@@ -26,23 +75,138 @@
             background-color: darkred; /* Darker green on hover */
         }
     </style>
-    <link rel="stylesheet" href="chrono.css">
 </head>
 <body>
     <div align="center">
-    <a href="Main.html" class="home-button">Go to Home</a>
-        
-    <div class="chronometer-container">
-        <div class="chronometer-card">
-            <h1 class="chronometer-title">Chronometer</h1>
-            <div id="display" class="chronometer-display">00:00:00</div>
-            <div class="controls">
-                <button id="startStop" class="btn start-stop-btn">Start</button>
-                <button id="reset" class="btn reset-btn">Reset</button>
-            </div>
-        </div>
+        <a href="Main.html" class="home-button">Go to Home</a>
+<div class="container">
+    <h1>Chronometer</h1>
+    <div id="display">00:00:00</div>
+
+    <div class="button-group">
+        <button id="startStop">Start</button>
+        <button id="reset">Reset</button>
     </div>
 </div>
-    <script src="chrono.js"></script>
+</div>
+
+<script>
+// Chronometer functionality with confirmation for logbook entry
+
+let timer;
+let running = false;
+let seconds = 0, minutes = 0, hours = 0;
+
+// Get DOM elements
+const display = document.getElementById("display");
+const startStopButton = document.getElementById("startStop");
+const resetButton = document.getElementById("reset");
+
+// Load the previous state from localStorage (if any)
+window.onload = function() {
+    if (localStorage.getItem('chronoTime')) {
+        let savedTime = JSON.parse(localStorage.getItem('chronoTime'));
+        seconds = savedTime.seconds;
+        minutes = savedTime.minutes;
+        hours = savedTime.hours;
+        running = savedTime.running;
+        updateDisplay();
+
+        if (running) {
+            startChronometer(true); // Restart the chronometer without resetting it
+        }
+    }
+}
+
+// Function to format time
+function formatTime(num) {
+    return num < 10 ? "0" + num : num;
+}
+
+// Function to update the display
+function updateDisplay() {
+    display.innerHTML = `${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`;
+}
+
+// Start or stop the chronometer
+function startChronometer(resuming = false) {
+    if (!running || resuming) {
+        timer = setInterval(() => {
+            seconds++;
+            if (seconds === 60) {
+                seconds = 0;
+                minutes++;
+            }
+            if (minutes === 60) {
+                minutes = 0;
+                hours++;
+            }
+            updateDisplay();
+            saveState();  // Save the state after every tick
+        }, 1000);
+        running = true;
+        startStopButton.innerText = "Stop";
+    } else {
+        clearInterval(timer);
+        running = false;
+        startStopButton.innerText = "Start";
+        saveState(); // Save the state when stopping
+        askToLogEntry(); // Ask user if they want to log the entry
+    }
+}
+
+// Reset the chronometer
+function resetChronometer() {
+    clearInterval(timer);
+    running = false;
+    startStopButton.innerText = "Start";
+    seconds = 0;
+    minutes = 0;
+    hours = 0;
+    updateDisplay();
+    saveState(); // Save the reset state
+}
+
+// Function to save the state in localStorage
+function saveState() {
+    const chronoState = {
+        seconds: seconds,
+        minutes: minutes,
+        hours: hours,
+        running: running
+    };
+    localStorage.setItem('chronoTime', JSON.stringify(chronoState));
+}
+
+// Function to ask user if they want to log the entry
+function askToLogEntry() {
+    const confirmLog = confirm("Do you want to log this time into your flight log?");
+    if (confirmLog) {
+        saveLogbookEntry(); // Save to logbook if user confirms
+    }
+}
+
+// Function to save the current time entry to the logbook
+function saveLogbookEntry() {
+    const logbookEntry = {
+        hours: hours,
+        minutes: minutes,
+        seconds: seconds,
+        date: new Date().toLocaleString() // Save with timestamp
+    };
+
+    let logbook = JSON.parse(localStorage.getItem('logbook')) || [];
+    logbook.push(logbookEntry);
+    localStorage.setItem('logbook', JSON.stringify(logbook));
+
+    alert("Time logged to your flight log!"); // Notify user
+}
+
+// Event listeners for buttons
+startStopButton.addEventListener("click", () => startChronometer());
+resetButton.addEventListener("click", resetChronometer);
+</script>
+
 </body>
 </html>
+
